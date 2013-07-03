@@ -1,0 +1,10 @@
+[Activity]
+name = Memorize Activity
+activity_version = 1
+bundle_id = org.sugarlabs.MemorizeActivity
+exec = sugar-activity-web
+icon = activity-icon
+
+
+
+
