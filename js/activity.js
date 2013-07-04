@@ -20,6 +20,16 @@ define(function (require) {
             activity.close();
         });
 
+        var buttonPressed = function (e) {
+            console.log(this.getAttribute('id'));
+        };
+
+        var buttons = document.querySelectorAll("#buttons-table button");
+        for (var i = 0; i < buttons.length; i++) {
+            var button = buttons[i];
+            button.addEventListener('click', buttonPressed);
+        }
+
     });
 
 });
