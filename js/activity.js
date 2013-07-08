@@ -21,7 +21,56 @@ define(function (require) {
             activity.close();
         });
 
-        // Create table.
+        // Example game.
+
+        var cardPairs = [
+            {question: '7+1', answer: '8'},
+            {question: '3+2', answer: '5'},
+            {question: '2+2', answer: '4'},
+            {question: '1+9', answer: '10'},
+            {question: '10+1', answer: '11'},
+            {question: '6+2', answer: '8'},
+            {question: '7+3', answer: '10'},
+            {question: '7+6', answer: '13'}
+        ];
+
+        // Utility to shuffle array elements.
+        function shuffle(array) {
+            var counter = array.length;
+            var temp;
+            var index;
+
+            // While there are elements in the array
+            while (counter > 0) {
+                // Pick a random index
+                index = (Math.random() * counter--) | 0;
+
+                // And swap the last element with it
+                temp = array[counter];
+                array[counter] = array[index];
+                array[index] = temp;
+            }
+
+            return array;
+        }
+
+        // Map the buttons to the questions and answers.
+        var createMatches = function () {
+            var matches = [];
+            var questions = [];
+            var answers = [];
+            for (var i = 0; i < cardPairs.length; i ++) {
+                questions.push(cardPairs[i].question);
+                answers.push(cardPairs[i].answer);
+            }
+            console.log(questions);
+            console.log(answers);
+            return matches.concat(shuffle(questions), shuffle(answers));
+        }
+
+        var matches = createMatches();
+
+        // Arrange the cards in a table.
         var tableElem = document.getElementById("buttons-table");
 
         var tableTemplate =
@@ -37,24 +86,32 @@ define(function (require) {
             '{{/rows}}' +
             '</tbody>';
 
-        tableData = {
-            "rows": [
-                [{"id": 1, "suit": 1}, {"id": 2, "suit": 1},
-                 {"id": 3, "suit": 1}, {"id": 4, "suit": 1}],
-                [{"id": 5, "suit": 1}, {"id": 6, "suit": 1},
-                 {"id": 7, "suit": 1}, {"id": 8, "suit": 1}],
-                [{"id": 9, "suit": 2}, {"id": 10, "suit": 2},
-                 {"id": 11, "suit": 2}, {"id": 12, "suit": 2}],
-                [{"id": 13, "suit": 2}, {"id": 14, "suit": 2},
-                 {"id": 15, "suit": 2}, {"id": 16, "suit": 2}]
-            ]
-        };
+        // Calculate the number of cards per row, based in the number
+        // of cards.
+        var cardsPerRow = Math.ceil(Math.sqrt(cardPairs.length * 2));
+
+        var tableData = {"rows": []};
+        var currentRow = [];
+        for (var i = 0; i < cardPairs.length * 2; i++) {
+            var suit;
+            if (i < cardPairs.length) {
+                suit = 1;
+            }
+            else {
+                suit = 2;
+            }
+            currentRow.push({"id": i, "suit": suit});
+            if (currentRow.length == cardsPerRow) {
+                tableData.rows.push(currentRow);
+                currentRow = [];
+            }
+        }
 
         tableElem.innerHTML = mustache.render(tableTemplate, tableData);
 
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {
-            console.log(this.getAttribute('id'));
+            this.innerHTML = matches[this.getAttribute('id')];
         };
 
         var buttons = document.querySelectorAll("#buttons-table button");
