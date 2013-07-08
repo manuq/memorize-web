@@ -23,14 +23,19 @@ define(function (require) {
 
         // Example game.
 
+        var status = "selecting question";
+        var questionSelected;
+        var answerSelected;
+        var cardsUnfolded;
+
         var cardPairs = [
             {question: '7+1', answer: '8'},
             {question: '3+2', answer: '5'},
             {question: '2+2', answer: '4'},
-            {question: '1+9', answer: '10'},
+            {question: '2+8', answer: '10'},
             {question: '10+1', answer: '11'},
-            {question: '6+2', answer: '8'},
-            {question: '7+3', answer: '10'},
+            {question: '5+2', answer: '7'},
+            {question: '5+4', answer: '9'},
             {question: '7+6', answer: '13'}
         ];
 
@@ -63,8 +68,6 @@ define(function (require) {
                 questions.push(cardPairs[i].question);
                 answers.push(cardPairs[i].answer);
             }
-            console.log(questions);
-            console.log(answers);
             return matches.concat(shuffle(questions), shuffle(answers));
         }
 
@@ -109,10 +112,68 @@ define(function (require) {
 
         tableElem.innerHTML = mustache.render(tableTemplate, tableData);
 
+        var requestAnimationFrame = window.requestAnimationFrame ||
+            window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+            window.msRequestAnimationFrame;
+
+        var checkMatches = function () {
+            for (var i = 0; i < cardPairs.length; i++) {
+                if (cardPairs[i].question == questionSelected) {
+                    if (cardPairs[i].answer == answerSelected) {
+                        for (var j = 0; j < cardsUnfolded.length; j++) {
+                            var elem = document.getElementById(cardsUnfolded[j]);
+                            elem.classList.add('match');
+                        }
+                        status = "selecting question";
+                    }
+                    else {
+                        // wait a sec, fold em again
+                        window.setTimeout(function () {
+                            for (var j = 0; j < cardsUnfolded.length; j++) {
+                                var elem = document.getElementById(cardsUnfolded[j]);
+                                elem.innerHTML = '';
+                                elem.classList.add('folded');
+                            }
+                            status = "selecting question";
+                        }, 1000);
+                    }
+                }
+            }
+        }
+
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {
-            this.innerHTML = matches[this.getAttribute('id')];
+            var id = this.getAttribute('id');
+            if (status == "selecting none") {
+                return;
+            }
+            if (status == "selecting question") {
+                if (id > cardPairs.length - 1) {
+                    return;
+                }
+            }
+            if (status == "selecting answer") {
+                if (id < cardPairs.length) {
+                    return;
+                }
+            }
+
+            this.innerHTML = matches[id];
             this.classList.remove('folded');
+
+            if (status == "selecting question") {
+                questionSelected = matches[id];
+                cardsUnfolded = [id];
+                status = "selecting answer";
+            }
+            else {
+                if (status == "selecting answer") {
+                    answerSelected = matches[id];
+                    cardsUnfolded.push(id);
+                    status = "selecting none";
+                    checkMatches();
+                }
+            }
         };
 
         var buttons = document.querySelectorAll("#buttons-table button");

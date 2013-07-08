@@ -22,3 +22,8 @@
   background-image: url(../images/suit-2.svg);
   border-color: #A0A0A0;
 }
+
+.match, .match:hover {
+  background-color: #ffff99;
+  color: black;
+}
