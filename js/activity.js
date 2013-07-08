@@ -79,7 +79,7 @@ define(function (require) {
               '<tr>' +
                 '{{#.}}' +
                 '<td>' +
-                  '<button id="{{id}}">{{suit}}</button>' +
+                  '<button id="{{id}}" class="suit-{{suit}} folded"></button>' +
                 '</td>' +
                 '{{/.}}' +
               '</tr>' +
@@ -112,6 +112,7 @@ define(function (require) {
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {
             this.innerHTML = matches[this.getAttribute('id')];
+            this.classList.remove('folded');
         };
 
         var buttons = document.querySelectorAll("#buttons-table button");
