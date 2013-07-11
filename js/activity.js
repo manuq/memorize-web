@@ -1,6 +1,9 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
     var icon = require("sugar-web/graphics/icon");
+    var model = require("activity/model");
+    var view = require("activity/view");
+    var controller = require("activity/controller");
     var mustache = require("mustache");
 
     // Manipulate the DOM only when it is ready.
@@ -20,6 +23,14 @@ define(function (require) {
         stopButton.addEventListener('click', function (e) {
             activity.close();
         });
+
+        function Memorize() {
+            this.model = new model.Model();
+            this.view = new view.View();
+            this.controller = new controller.Controller(this.model, this.view);
+        }
+
+        memorize = new Memorize();
 
         // Example game.
 
