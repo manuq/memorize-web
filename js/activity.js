@@ -44,11 +44,6 @@ define(function (require) {
 
         memorize = new Memorize();
 
-        var status = "selecting question";
-        var questionSelected;
-        var answerSelected;
-        var cardsUnfolded;
-
         // Arrange the cards in a table.
         var tableElem = document.getElementById("buttons-table");
 
@@ -92,62 +87,47 @@ define(function (require) {
             window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
             window.msRequestAnimationFrame;
 
-        var checkMatches = function () {
-            for (var i = 0; i < cardsSet.length; i++) {
-                if (cardsSet[i].question == questionSelected) {
-                    if (cardsSet[i].answer == answerSelected) {
-                        for (var j = 0; j < cardsUnfolded.length; j++) {
-                            var elem = document.getElementById(cardsUnfolded[j]);
-                            elem.classList.add('match');
-                        }
-                        status = "selecting question";
-                    }
-                    else {
-                        // wait a sec, fold em again
-                        window.setTimeout(function () {
-                            for (var j = 0; j < cardsUnfolded.length; j++) {
-                                var elem = document.getElementById(cardsUnfolded[j]);
-                                elem.innerHTML = '';
-                                elem.classList.add('folded');
-                            }
-                            status = "selecting question";
-                        }, 1000);
-                    }
-                }
-            }
-        }
-
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {
             var id = this.getAttribute('id');
-            if (status == "selecting none") {
+            if (memorize.model.status == "selecting none") {
                 return;
             }
-            if (status == "selecting question") {
+            if (memorize.model.status == "selecting question") {
                 if (id > cardsSet.length - 1) {
                     return;
                 }
             }
-            if (status == "selecting answer") {
+            if (memorize.model.status == "selecting answer") {
                 if (id < cardsSet.length) {
                     return;
                 }
             }
 
-            this.innerHTML = memorize.model.inGameCards[id];
+            var result = memorize.model.selectCard(id);
+
+            this.innerHTML = result.cardContent;
             this.classList.remove('folded');
 
-            if (status == "selecting question") {
-                questionSelected = memorize.model.inGameCards[id];
-                cardsUnfolded = [id];
-                status = "selecting answer";
-            }
-            else {
-                if (status == "selecting answer") {
-                    answerSelected = memorize.model.inGameCards[id];
-                    cardsUnfolded.push(id);
-                    status = "selecting none";
-                    checkMatches();
+            if (result.end) {
+                var match = memorize.model.checkMatches();
+                if (match) {
+                    for (var j = 0; j < memorize.model.unfoldedCards.length; j++) {
+                        var elem = document.getElementById(memorize.model.unfoldedCards[j]);
+                        elem.classList.add('match');
+                    }
+                    memorize.model.status = "selecting question";
+                }
+                else {
+                    // wait a sec, fold em again
+                    window.setTimeout(function () {
+                        for (var j = 0; j < memorize.model.unfoldedCards.length; j++) {
+                            var elem = document.getElementById(memorize.model.unfoldedCards[j]);
+                            elem.innerHTML = '';
+                            elem.classList.add('folded');
+                        }
+                        memorize.model.status = "selecting question";
+                    }, 1000);
                 }
             }
         };
