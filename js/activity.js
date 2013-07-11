@@ -89,22 +89,13 @@ define(function (require) {
 
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {
-            var id = this.getAttribute('id');
-            if (memorize.model.status == "selecting none") {
+            var cardPosition = this.getAttribute('id');
+
+            if (memorize.model.prohibitedMove(cardPosition)) {
                 return;
             }
-            if (memorize.model.status == "selecting question") {
-                if (id > cardsSet.length - 1) {
-                    return;
-                }
-            }
-            if (memorize.model.status == "selecting answer") {
-                if (id < cardsSet.length) {
-                    return;
-                }
-            }
 
-            var result = memorize.model.selectCard(id);
+            var result = memorize.model.selectCard(cardPosition);
 
             this.innerHTML = result.cardContent;
             this.classList.remove('folded');

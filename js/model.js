@@ -46,6 +46,25 @@ define(function (require) {
         this.inGameCards = shuffle(questions).concat(shuffle(answers));
     };
 
+    // Return true if the move is prohibited in the current game
+    // status.
+    model.Model.prototype.prohibitedMove = function (cardPosition) {
+        if (this.status == "selecting none") {
+            return true;
+        }
+        if (this.status == "selecting question") {
+            if (cardPosition > this.cardsSet.length - 1) {
+                return true;
+            }
+        }
+        if (this.status == "selecting answer") {
+            if (cardPosition < this.cardsSet.length) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     // Return the card content and update the game state.
     model.Model.prototype.selectCard = function (cardPosition) {
         var cardContent = this.inGameCards[cardPosition];
