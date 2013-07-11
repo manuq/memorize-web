@@ -56,26 +56,18 @@ define(function (require) {
 
             var result = memorize.model.selectCard(cardPosition);
 
-            this.innerHTML = result.cardContent;
-            this.classList.remove('folded');
+            memorize.view.unfoldCard(this, result.cardContent);
 
             if (result.end) {
                 var match = memorize.model.checkMatches();
                 if (match) {
-                    for (var j = 0; j < memorize.model.unfoldedCards.length; j++) {
-                        var elem = document.getElementById(memorize.model.unfoldedCards[j]);
-                        elem.classList.add('match');
-                    }
+                    memorize.view.highlightCards(memorize.model.unfoldedCards);
                     memorize.model.unlockMove();
                 }
                 else {
-                    // wait a sec, fold em again
+                    // Wait a second, fold them again.
                     window.setTimeout(function () {
-                        for (var j = 0; j < memorize.model.unfoldedCards.length; j++) {
-                            var elem = document.getElementById(memorize.model.unfoldedCards[j]);
-                            elem.innerHTML = '';
-                            elem.classList.add('folded');
-                        }
+                        memorize.view.foldCards(memorize.model.unfoldedCards);
                         memorize.model.unlockMove();
                     }, 1000);
                 }

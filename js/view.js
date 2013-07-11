@@ -45,6 +45,26 @@ define(function (require) {
         tableElem.innerHTML = mustache.render(this.template, tableData);
     };
 
+    view.View.prototype.unfoldCard = function (card, cardContent) {
+        card.innerHTML = cardContent;
+        card.classList.remove('folded');
+    };
+
+    view.View.prototype.highlightCards = function (unfoldedCards) {
+        for (var j = 0; j < unfoldedCards.length; j++) {
+            var elem = document.getElementById(unfoldedCards[j]);
+            elem.classList.add('match');
+        }
+    };
+
+    view.View.prototype.foldCards = function (unfoldedCards) {
+        for (var j = 0; j < unfoldedCards.length; j++) {
+            var elem = document.getElementById(unfoldedCards[j]);
+            elem.innerHTML = '';
+            elem.classList.add('folded');
+        }
+    };
+
     return view;
 
 });
