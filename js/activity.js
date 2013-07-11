@@ -1,10 +1,10 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
     var icon = require("sugar-web/graphics/icon");
+
     var model = require("activity/model");
     var view = require("activity/view");
     var controller = require("activity/controller");
-    var mustache = require("mustache");
 
     // Manipulate the DOM only when it is ready.
     require(['domReady!'], function (doc) {
@@ -37,55 +37,14 @@ define(function (require) {
         ];
 
         function Memorize() {
-            this.model = new model.Model(cardsSet);
+            this.model = new model.Model();
             this.view = new view.View();
             this.controller = new controller.Controller(this.model, this.view);
         }
 
         memorize = new Memorize();
-
-        // Arrange the cards in a table.
-        var tableElem = document.getElementById("buttons-table");
-
-        var tableTemplate =
-            '<tbody>' +
-            '{{#rows}}' +
-              '<tr>' +
-                '{{#.}}' +
-                '<td>' +
-                  '<button id="{{id}}" class="suit-{{suit}} folded"></button>' +
-                '</td>' +
-                '{{/.}}' +
-              '</tr>' +
-            '{{/rows}}' +
-            '</tbody>';
-
-        // Calculate the number of cards per row, based in the number
-        // of cards.
-        var cardsPerRow = Math.ceil(Math.sqrt(cardsSet.length * 2));
-
-        var tableData = {"rows": []};
-        var currentRow = [];
-        for (var i = 0; i < cardsSet.length * 2; i++) {
-            var suit;
-            if (i < cardsSet.length) {
-                suit = 1;
-            }
-            else {
-                suit = 2;
-            }
-            currentRow.push({"id": i, "suit": suit});
-            if (currentRow.length == cardsPerRow) {
-                tableData.rows.push(currentRow);
-                currentRow = [];
-            }
-        }
-
-        tableElem.innerHTML = mustache.render(tableTemplate, tableData);
-
-        var requestAnimationFrame = window.requestAnimationFrame ||
-            window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
-            window.msRequestAnimationFrame;
+        memorize.model.loadGame(cardsSet);
+        memorize.view.createView(cardsSet);
 
         // Add callback to click events of table buttons.
         var buttonPressed = function (e) {

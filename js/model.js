@@ -22,19 +22,24 @@ define(function (require) {
         return array;
     }
 
-    model.Model = function (cardsSet) {
-        this.cardsSet = cardsSet;
+    model.Model = function () {
+        this.cardsSet = undefined;
         this.inGameCards = undefined;
-        this.status = "selecting question";
+        this.status = undefined;
         this.selectedQuestion = undefined;
         this.selectedAnswer = undefined;
         this.unfoldedCards = undefined;
+    };
+
+    model.Model.prototype.loadGame = function (cardsSet) {
+        this.cardsSet = cardsSet;
+        this.status = "selecting question";
         this.createGame();
     };
 
     // Initialize gameCards, the set of cards shuffled and grouped in
     // two suits: questions and answers.
-    model.Model.prototype.createGame = function () {
+    model.Model.prototype.createGame = function (cardsSet) {
         var questions = [];
         var answers = [];
 
