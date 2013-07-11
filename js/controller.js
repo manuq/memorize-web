@@ -25,13 +25,13 @@ define(function (require) {
             if (result.end) {
                 var match = that.model.checkMatches();
                 if (match) {
-                    that.view.highlightCards(that.model.unfoldedCards);
+                    that.view.highlightCards(that.model.currentUnfoldedCards);
                     that.model.unlockMove();
                 }
                 else {
                     // Wait a second, fold them again.
                     window.setTimeout(function () {
-                        that.view.foldCards(that.model.unfoldedCards);
+                        that.view.foldCards(that.model.currentUnfoldedCards);
                         that.model.unlockMove();
                     }, 1000);
                 }

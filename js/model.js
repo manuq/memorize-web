@@ -29,11 +29,14 @@ define(function (require) {
         this.selectedQuestion = undefined;
         this.selectedAnswer = undefined;
         this.unfoldedCards = undefined;
+        this.currentUnfoldedCards = undefined;
     };
 
     model.Model.prototype.loadGame = function (cardsSet) {
         this.cardsSet = cardsSet;
         this.status = "selecting question";
+        this.unfoldedCards = [];
+        this.currentUnfoldedCards = [];
         this.createGame();
     };
 
@@ -58,19 +61,35 @@ define(function (require) {
     // Return true if the move is prohibited in the current game
     // status.
     model.Model.prototype.prohibitedMove = function (cardPosition) {
+        // The user is not allowed to move in the current status.
         if (this.status == "selecting none") {
             return true;
         }
+
+        // The user should select a question but is trying to select
+        // an answer.
         if (this.status == "selecting question") {
             if (cardPosition > this.cardsSet.length - 1) {
                 return true;
             }
         }
+
+        // The user should select an answer but is trying to select
+        // a question.
         if (this.status == "selecting answer") {
             if (cardPosition < this.cardsSet.length) {
                 return true;
             }
         }
+
+        // The user is trying to select a card that was already
+        // unfolded.
+        for (var i = 0; i < this.unfoldedCards.length; i++) {
+            if (cardPosition == this.unfoldedCards[i]) {
+                return true;
+            }
+        }
+
         return false;
     };
 
@@ -80,14 +99,14 @@ define(function (require) {
 
         if (this.status == "selecting question") {
             this.selectedQuestion = this.inGameCards[cardPosition];
-            this.unfoldedCards = [cardPosition];
+            this.currentUnfoldedCards = [cardPosition];
             this.status = "selecting answer";
             return {'cardContent': cardContent, 'end': false};
         }
         else {
             if (this.status == "selecting answer") {
                 this.selectedAnswer = this.inGameCards[cardPosition];
-                this.unfoldedCards.push(cardPosition);
+                this.currentUnfoldedCards.push(cardPosition);
                 this.status = "selecting none";
                 return {'cardContent': cardContent, 'end': true};
             }
@@ -98,7 +117,14 @@ define(function (require) {
     model.Model.prototype.checkMatches = function () {
         for (var i = 0; i < this.cardsSet.length; i++) {
             if (this.cardsSet[i].question == this.selectedQuestion) {
-                return (this.cardsSet[i].answer == this.selectedAnswer);
+                var match = (this.cardsSet[i].answer == this.selectedAnswer);
+                if (match) {
+                    // Update the list of unfolded cards.
+                    for (var j = 0; j < this.currentUnfoldedCards.length; j++) {
+                        this.unfoldedCards.push(this.currentUnfoldedCards[j]);
+                    }
+                }
+                return match;
             }
         }
     };
