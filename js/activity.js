@@ -66,7 +66,7 @@ define(function (require) {
                         var elem = document.getElementById(memorize.model.unfoldedCards[j]);
                         elem.classList.add('match');
                     }
-                    memorize.model.status = "selecting question";
+                    memorize.model.unlockMove();
                 }
                 else {
                     // wait a sec, fold em again
@@ -76,7 +76,7 @@ define(function (require) {
                             elem.innerHTML = '';
                             elem.classList.add('folded');
                         }
-                        memorize.model.status = "selecting question";
+                        memorize.model.unlockMove();
                     }, 1000);
                 }
             }

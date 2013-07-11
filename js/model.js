@@ -51,6 +51,10 @@ define(function (require) {
         this.inGameCards = shuffle(questions).concat(shuffle(answers));
     };
 
+    model.Model.prototype.unlockMove = function (cardPosition) {
+        this.status = "selecting question";
+    };
+
     // Return true if the move is prohibited in the current game
     // status.
     model.Model.prototype.prohibitedMove = function (cardPosition) {
