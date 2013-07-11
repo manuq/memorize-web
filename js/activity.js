@@ -45,40 +45,7 @@ define(function (require) {
         memorize = new Memorize();
         memorize.model.loadGame(cardsSet);
         memorize.view.createView(cardsSet);
-
-        // Add callback to click events of table buttons.
-        var buttonPressed = function (e) {
-            var cardPosition = this.getAttribute('id');
-
-            if (memorize.model.prohibitedMove(cardPosition)) {
-                return;
-            }
-
-            var result = memorize.model.selectCard(cardPosition);
-
-            memorize.view.unfoldCard(this, result.cardContent);
-
-            if (result.end) {
-                var match = memorize.model.checkMatches();
-                if (match) {
-                    memorize.view.highlightCards(memorize.model.unfoldedCards);
-                    memorize.model.unlockMove();
-                }
-                else {
-                    // Wait a second, fold them again.
-                    window.setTimeout(function () {
-                        memorize.view.foldCards(memorize.model.unfoldedCards);
-                        memorize.model.unlockMove();
-                    }, 1000);
-                }
-            }
-        };
-
-        var buttons = document.querySelectorAll("#buttons-table button");
-        for (var i = 0; i < buttons.length; i++) {
-            var button = buttons[i];
-            button.addEventListener('click', buttonPressed);
-        }
+        memorize.controller.update();
 
     });
 
