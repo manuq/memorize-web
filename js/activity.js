@@ -24,22 +24,8 @@ define(function (require) {
             activity.close();
         });
 
-        function Memorize() {
-            this.model = new model.Model();
-            this.view = new view.View();
-            this.controller = new controller.Controller(this.model, this.view);
-        }
-
-        memorize = new Memorize();
-
         // Example game.
-
-        var status = "selecting question";
-        var questionSelected;
-        var answerSelected;
-        var cardsUnfolded;
-
-        var cardPairs = [
+        var cardsSet = [
             {question: '7+1', answer: '8'},
             {question: '3+2', answer: '5'},
             {question: '2+2', answer: '4'},
@@ -50,39 +36,18 @@ define(function (require) {
             {question: '7+6', answer: '13'}
         ];
 
-        // Utility to shuffle array elements.
-        function shuffle(array) {
-            var counter = array.length;
-            var temp;
-            var index;
-
-            // While there are elements in the array
-            while (counter > 0) {
-                // Pick a random index
-                index = (Math.random() * counter--) | 0;
-
-                // And swap the last element with it
-                temp = array[counter];
-                array[counter] = array[index];
-                array[index] = temp;
-            }
-
-            return array;
+        function Memorize() {
+            this.model = new model.Model(cardsSet);
+            this.view = new view.View();
+            this.controller = new controller.Controller(this.model, this.view);
         }
 
-        // Map the buttons to the questions and answers.
-        var createMatches = function () {
-            var matches = [];
-            var questions = [];
-            var answers = [];
-            for (var i = 0; i < cardPairs.length; i ++) {
-                questions.push(cardPairs[i].question);
-                answers.push(cardPairs[i].answer);
-            }
-            return matches.concat(shuffle(questions), shuffle(answers));
-        }
+        memorize = new Memorize();
 
-        var matches = createMatches();
+        var status = "selecting question";
+        var questionSelected;
+        var answerSelected;
+        var cardsUnfolded;
 
         // Arrange the cards in a table.
         var tableElem = document.getElementById("buttons-table");
@@ -102,13 +67,13 @@ define(function (require) {
 
         // Calculate the number of cards per row, based in the number
         // of cards.
-        var cardsPerRow = Math.ceil(Math.sqrt(cardPairs.length * 2));
+        var cardsPerRow = Math.ceil(Math.sqrt(cardsSet.length * 2));
 
         var tableData = {"rows": []};
         var currentRow = [];
-        for (var i = 0; i < cardPairs.length * 2; i++) {
+        for (var i = 0; i < cardsSet.length * 2; i++) {
             var suit;
-            if (i < cardPairs.length) {
+            if (i < cardsSet.length) {
                 suit = 1;
             }
             else {
@@ -128,9 +93,9 @@ define(function (require) {
             window.msRequestAnimationFrame;
 
         var checkMatches = function () {
-            for (var i = 0; i < cardPairs.length; i++) {
-                if (cardPairs[i].question == questionSelected) {
-                    if (cardPairs[i].answer == answerSelected) {
+            for (var i = 0; i < cardsSet.length; i++) {
+                if (cardsSet[i].question == questionSelected) {
+                    if (cardsSet[i].answer == answerSelected) {
                         for (var j = 0; j < cardsUnfolded.length; j++) {
                             var elem = document.getElementById(cardsUnfolded[j]);
                             elem.classList.add('match');
@@ -159,27 +124,27 @@ define(function (require) {
                 return;
             }
             if (status == "selecting question") {
-                if (id > cardPairs.length - 1) {
+                if (id > cardsSet.length - 1) {
                     return;
                 }
             }
             if (status == "selecting answer") {
-                if (id < cardPairs.length) {
+                if (id < cardsSet.length) {
                     return;
                 }
             }
 
-            this.innerHTML = matches[id];
+            this.innerHTML = memorize.model.inGameCards[id];
             this.classList.remove('folded');
 
             if (status == "selecting question") {
-                questionSelected = matches[id];
+                questionSelected = memorize.model.inGameCards[id];
                 cardsUnfolded = [id];
                 status = "selecting answer";
             }
             else {
                 if (status == "selecting answer") {
-                    answerSelected = matches[id];
+                    answerSelected = memorize.model.inGameCards[id];
                     cardsUnfolded.push(id);
                     status = "selecting none";
                     checkMatches();
