@@ -3,6 +3,56 @@ define(function (require) {
 
     var view = {};
 
+    // Utility to make the text fit the button.
+    function scaleTextToFit(button) {
+
+        // Remove 'px' from CSS strings.
+        px = function (styleString) {
+            return styleString.slice(0, -2);
+        }
+
+        var buttonStyle = button.currentStyle ||
+            window.getComputedStyle(button, '');
+
+        // Get the allowed space inside the button.
+        var targetWidth = px(buttonStyle.width) -
+            (2 * px(buttonStyle.borderBottomWidth)) -
+            (2 * px(buttonStyle.paddingLeft));
+
+        // Temporarily add a new div to the document.  Copy the
+        // content of the button to the div.
+        var helperDiv = document.createElement('div');
+        helperDiv.style.visibility = "hidden";
+        helperDiv.style.display = "inline-block";
+        helperDiv.style.fontSize = buttonStyle.fontSize;
+        helperDiv.innerHTML = button.innerHTML;
+        document.body.appendChild(helperDiv);
+
+        // Try smaller font sizes in the div until its width is not
+        // bigger than the button.
+
+        var divStyle = helperDiv.currentStyle ||
+            window.getComputedStyle(helperDiv, '');
+
+        var width = px(divStyle.width);
+        if (width > targetWidth) {
+            while (width > targetWidth) {
+                // Remove 'px' from the strings.
+                var oldSize = px(helperDiv.style.fontSize);
+                var newSize = oldSize - 1 + "px";
+                helperDiv.style.fontSize = newSize;
+
+                divStyle = helperDiv.currentStyle ||
+                    window.getComputedStyle(helperDiv, '');
+
+                width = px(divStyle.width);
+            }
+            button.style.fontSize = helperDiv.style.fontSize;
+        }
+
+        document.body.removeChild(helperDiv);
+    }
+
     view.View = function () {
         this.template =
             '<tbody>' +
@@ -47,6 +97,7 @@ define(function (require) {
 
     view.View.prototype.unfoldCard = function (card, cardContent) {
         card.innerHTML = cardContent;
+        scaleTextToFit(card);
         card.classList.remove('folded');
     };
 
