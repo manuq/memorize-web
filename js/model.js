@@ -40,6 +40,10 @@ define(function (require) {
         this.createGame();
     };
 
+    model.Model.prototype.changeSize = function (size) {
+        console.log(size);
+    };
+
     // Initialize gameCards, the set of cards shuffled and grouped in
     // two suits: questions and answers.
     model.Model.prototype.createGame = function (cardsSet) {

@@ -2,6 +2,18 @@
   background-image: url(../activity/activity-icon.svg);
 }
 
+#main-toolbar #four-button {
+  background-image: url(../icons/4x4.svg);
+}
+
+#main-toolbar #five-button {
+  background-image: url(../icons/5x5.svg);
+}
+
+#main-toolbar #six-button {
+  background-image: url(../icons/6x6.svg);
+}
+
 #buttons-table button {
   width: 100px;
   height: 100px;

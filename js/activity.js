@@ -1,5 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
+    var radioButtonsGroup = require("sugar-web/graphics/radiobuttonsgroup");
 
     var model = require("activity/model");
     var view = require("activity/view");
@@ -33,6 +34,24 @@ define(function (require) {
         memorize.model.loadGame(cardsSet);
         memorize.view.createView(cardsSet);
         memorize.controller.update();
+
+        var fourButton = document.getElementById("four-button");
+        fourButton.onclick = function () {
+            memorize.model.changeSize(4);
+        };
+
+        var fiveButton = document.getElementById("five-button");
+        fiveButton.onclick = function () {
+            memorize.model.changeSize(5);
+        };
+
+        var sixButton = document.getElementById("six-button");
+        sixButton.onclick = function () {
+            memorize.model.changeSize(6);
+        };
+
+        var sizeRadio = new radioButtonsGroup.RadioButtonsGroup(
+        [fourButton, fiveButton, sixButton]);
 
     });
 
