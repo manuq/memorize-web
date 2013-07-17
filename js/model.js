@@ -25,6 +25,7 @@ define(function (require) {
     model.Model = function () {
         this.cardsSet = undefined;
         this.inGameCards = undefined;
+        this.size = undefined;
         this.status = undefined;
         this.selectedQuestion = undefined;
         this.selectedAnswer = undefined;
@@ -34,25 +35,30 @@ define(function (require) {
 
     model.Model.prototype.loadGame = function (cardsSet) {
         this.cardsSet = cardsSet;
-        this.status = "selecting question";
-        this.unfoldedCards = [];
-        this.currentUnfoldedCards = [];
         this.createGame();
-    };
-
-    model.Model.prototype.changeSize = function (size) {
-        console.log(size);
     };
 
     // Initialize gameCards, the set of cards shuffled and grouped in
     // two suits: questions and answers.
-    model.Model.prototype.createGame = function (cardsSet) {
+    model.Model.prototype.createGame = function (size) {
+        this.size = size || this.size || 4;
+        this.status = "selecting question";
+        this.selectedQuestion = undefined;
+        this.selectedAnswer = undefined;
+        this.unfoldedCards = [];
+        this.currentUnfoldedCards = [];
+
+        var pairs = Math.floor(this.size * this.size / 2);
         var questions = [];
         var answers = [];
 
-        for (var i = 0; i < this.cardsSet.length; i ++) {
-            questions.push(this.cardsSet[i].question);
-            answers.push(this.cardsSet[i].answer);
+        // Clone the set of cards, shuffle them, and select the needed
+        // pairs.
+        var subset = shuffle(this.cardsSet.slice(0)).slice(0, pairs);
+
+        for (var i = 0; i < subset.length; i ++) {
+            questions.push(subset[i].question);
+            answers.push(subset[i].answer);
         }
 
         this.inGameCards = shuffle(questions).concat(shuffle(answers));
@@ -73,7 +79,7 @@ define(function (require) {
         // The user should select a question but is trying to select
         // an answer.
         if (this.status == "selecting question") {
-            if (cardPosition > this.cardsSet.length - 1) {
+            if (cardPosition > (this.inGameCards.length / 2) - 1) {
                 return true;
             }
         }
@@ -81,7 +87,7 @@ define(function (require) {
         // The user should select an answer but is trying to select
         // a question.
         if (this.status == "selecting answer") {
-            if (cardPosition < this.cardsSet.length) {
+            if (cardPosition < (this.inGameCards.length / 2)) {
                 return true;
             }
         }

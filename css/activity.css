@@ -14,10 +14,21 @@
   background-image: url(../icons/6x6.svg);
 }
 
+#buttons-table {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 #buttons-table button {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   font-size: 250%;
+  border-radius: 5px;
+}
+
+#buttons-table td {
+  padding: 0;
 }
 
 .folded {

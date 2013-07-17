@@ -68,16 +68,22 @@ define(function (require) {
             '</tbody>';
     };
 
-    view.View.prototype.createView = function (cardsSet) {
+    view.View.prototype.createView = function (size) {
         // Calculate the number of cards per row, based in the number
         // of cards.
-        var cardsPerRow = Math.ceil(Math.sqrt(cardsSet.length * 2));
+        var cardsLength = size * size;
+
+        // The number of cards must be even.
+        if (cardsLength % 2 != 0) {
+            cardsLength -= 1;
+        }
+        var cardsPerRow = Math.ceil(Math.sqrt(cardsLength));
 
         var tableData = {"rows": []};
         var currentRow = [];
-        for (var i = 0; i < cardsSet.length * 2; i++) {
+        for (var i = 0; i < cardsLength; i++) {
             var suit;
-            if (i < cardsSet.length) {
+            if (i < cardsLength / 2) {
                 suit = 1;
             }
             else {
@@ -87,6 +93,13 @@ define(function (require) {
             if (currentRow.length == cardsPerRow) {
                 tableData.rows.push(currentRow);
                 currentRow = [];
+            }
+            // The row is not complete but it is the last card.
+            else {
+                if (i == cardsLength -1) {
+                    tableData.rows.push(currentRow);
+                    currentRow = [];
+                }
             }
         }
 
