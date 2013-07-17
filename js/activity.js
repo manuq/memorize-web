@@ -1,6 +1,7 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var radioButtonsGroup = require("sugar-web/graphics/radiobuttonsgroup");
+    var palette = require("sugar-web/graphics/palette");
+    var mustache = require("mustache");
 
     var model = require("activity/model");
     var view = require("activity/view");
@@ -45,11 +46,41 @@ define(function (require) {
         memorize.view.createView(4);
         memorize.controller.update();
 
+        var sizeButton = document.getElementById("size-button");
+        var sizePalette = new palette.Palette(sizeButton, "Change size");
+
+        var template =
+            '{{#.}}' +
+            '<li><button' +
+            ' {{ #icon }}class="icon"{{ /icon }}' +
+            ' {{ #id }}id="{{ id }}"{{ /id }}' +
+            '>' +
+            '{{ #icon }}<span></span>{{ /icon }}' +
+            '{{ label }}</button></li>' +
+            '{{/.}}';
+
+        var menuData = [
+            {label: "4 X 4", id: "four-button", icon: true},
+            {label: "5 X 5", id: "five-button", icon: true},
+            {label: "6 X 6", id: "six-button", icon: true}
+        ];
+
+        var paletteMenu = document.createElement('ul');
+        paletteMenu.className = "menu";
+        paletteMenu.innerHTML = mustache.render(template, menuData);
+        sizePalette.setContent([paletteMenu]);
+
         var fourButton = document.getElementById("four-button");
         fourButton.onclick = function () {
             memorize.model.createGame(4);
             memorize.view.createView(4);
             memorize.controller.update();
+            sizePalette.popDown();
+            var span = this.querySelector('span');
+            var style = span.currentStyle || window.getComputedStyle(span, '');
+            sizeButton.style.backgroundImage = style.backgroundImage;
+            var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
+            invoker.style.backgroundImage = style.backgroundImage;
         };
 
         var fiveButton = document.getElementById("five-button");
@@ -57,6 +88,12 @@ define(function (require) {
             memorize.model.createGame(5);
             memorize.view.createView(5);
             memorize.controller.update();
+            sizePalette.popDown();
+            var span = this.querySelector('span');
+            var style = span.currentStyle || window.getComputedStyle(span, '');
+            sizeButton.style.backgroundImage = style.backgroundImage;
+            var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
+            invoker.style.backgroundImage = style.backgroundImage;
         };
 
         var sixButton = document.getElementById("six-button");
@@ -64,10 +101,13 @@ define(function (require) {
             memorize.model.createGame(6);
             memorize.view.createView(6);
             memorize.controller.update();
+            sizePalette.popDown();
+            var span = this.querySelector('span');
+            var style = span.currentStyle || window.getComputedStyle(span, '');
+            sizeButton.style.backgroundImage = style.backgroundImage;
+            var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
+            invoker.style.backgroundImage = style.backgroundImage;
         };
-
-        var sizeRadio = new radioButtonsGroup.RadioButtonsGroup(
-        [fourButton, fiveButton, sixButton]);
 
         var restartButton = document.getElementById("restart-button");
         restartButton.onclick = function () {
