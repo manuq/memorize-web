@@ -69,6 +69,13 @@ define(function (require) {
         var sizeRadio = new radioButtonsGroup.RadioButtonsGroup(
         [fourButton, fiveButton, sixButton]);
 
+        var restartButton = document.getElementById("restart-button");
+        restartButton.onclick = function () {
+            memorize.model.createGame();
+            memorize.view.createView(memorize.model.size);
+            memorize.controller.update();
+        };
+
     });
 
 });

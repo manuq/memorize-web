@@ -14,6 +14,10 @@
   background-image: url(../icons/6x6.svg);
 }
 
+#main-toolbar #restart-button {
+  background-image: url(../icons/restart-game.svg);
+}
+
 #canvas {
   overflow: hidden;
 }
