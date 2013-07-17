@@ -123,6 +123,10 @@ define(function (require) {
         }
     };
 
+    model.Model.prototype.gameDone = function () {
+        return this.unfoldedCards.length == this.inGameCards.length;
+    }
+
     // Return true if the unfolded cards match.
     model.Model.prototype.checkMatches = function () {
         for (var i = 0; i < this.cardsSet.length; i++) {

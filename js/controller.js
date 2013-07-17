@@ -27,6 +27,10 @@ define(function (require) {
                 if (match) {
                     that.view.highlightCards(that.model.currentUnfoldedCards);
                     that.model.unlockMove();
+
+                    if (that.model.gameDone()) {
+                        that.view.highlightDone(that.model.unfoldedCards);
+                    }
                 }
                 else {
                     // Wait a second, fold them again.

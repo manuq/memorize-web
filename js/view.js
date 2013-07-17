@@ -121,6 +121,13 @@ define(function (require) {
         }
     };
 
+    view.View.prototype.highlightDone = function (unfoldedCards) {
+        for (var j = 0; j < unfoldedCards.length; j++) {
+            var elem = document.getElementById(unfoldedCards[j]);
+            elem.classList.add('done');
+        }
+    };
+
     view.View.prototype.foldCards = function (unfoldedCards) {
         for (var j = 0; j < unfoldedCards.length; j++) {
             var elem = document.getElementById(unfoldedCards[j]);

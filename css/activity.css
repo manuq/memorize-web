@@ -14,6 +14,10 @@
   background-image: url(../icons/6x6.svg);
 }
 
+#canvas {
+  overflow: hidden;
+}
+
 #buttons-table {
   position: absolute;
   right: 0;
@@ -49,4 +53,19 @@
 .match, .match:hover {
   background-color: #ffff99;
   color: black;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  -ms-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.match.done {
+  background-color: #ffffff;
+  -webkit-transition: background-color 5s ease-in-out rotate 2s ease-in-out;
+  -webkit-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -o-transform: rotate(360deg);
+  -ms-transform: rotate(360deg);
+  transform: rotate(360deg);
 }
