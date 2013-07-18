@@ -7,6 +7,13 @@ define(function (require) {
         this.view = view;
     };
 
+    controller.Controller.prototype.newGame = function (size) {
+        var size = size || this.model.size;
+        this.model.createGame(size);
+        this.view.createView(size);
+        this.update();
+    };
+
     // Add callback to click events of table buttons.
     controller.Controller.prototype.update = function () {
         var that = this;

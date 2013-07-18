@@ -1,6 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var palette = require("sugar-web/graphics/palette");
+    var palettemenu = require("sugar-web/graphics/palettemenu");
     var mustache = require("mustache");
 
     var model = require("activity/model");
@@ -43,21 +43,7 @@ define(function (require) {
 
         memorize = new Memorize();
         memorize.model.loadGame(cardsSet);
-        memorize.view.createView(4);
-        memorize.controller.update();
-
-        var sizeButton = document.getElementById("size-button");
-        var sizePalette = new palette.Palette(sizeButton, "Change size");
-
-        var template =
-            '{{#.}}' +
-            '<li><button' +
-            ' {{ #icon }}class="icon"{{ /icon }}' +
-            ' {{ #id }}id="{{ id }}"{{ /id }}' +
-            '>' +
-            '{{ #icon }}<span></span>{{ /icon }}' +
-            '{{ label }}</button></li>' +
-            '{{/.}}';
+        memorize.controller.newGame(4);
 
         var menuData = [
             {label: "4 X 4", id: "four-button", icon: true},
@@ -65,57 +51,39 @@ define(function (require) {
             {label: "6 X 6", id: "six-button", icon: true}
         ];
 
-        var paletteMenu = document.createElement('ul');
-        paletteMenu.className = "menu";
-        paletteMenu.innerHTML = mustache.render(template, menuData);
-        sizePalette.setContent([paletteMenu]);
+        var sizeButton = document.getElementById("size-button");
+        var sizePalette = new palettemenu.PaletteMenu(sizeButton, "Change size",
+                                                      menuData);
 
-        var fourButton = document.getElementById("four-button");
-        fourButton.onclick = function () {
-            memorize.model.createGame(4);
-            memorize.view.createView(4);
-            memorize.controller.update();
-            sizePalette.popDown();
-            var span = this.querySelector('span');
+        var changePaletteIcon = function (button) {
+            var span = button.querySelector('span');
             var style = span.currentStyle || window.getComputedStyle(span, '');
             sizeButton.style.backgroundImage = style.backgroundImage;
             var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
             invoker.style.backgroundImage = style.backgroundImage;
+        };
+
+        var fourButton = document.getElementById("four-button");
+        fourButton.onclick = function () {
+            memorize.controller.newGame(4);
+            changePaletteIcon(this);
         };
 
         var fiveButton = document.getElementById("five-button");
         fiveButton.onclick = function () {
-            memorize.model.createGame(5);
-            memorize.view.createView(5);
-            memorize.controller.update();
-            sizePalette.popDown();
-            var span = this.querySelector('span');
-            var style = span.currentStyle || window.getComputedStyle(span, '');
-            sizeButton.style.backgroundImage = style.backgroundImage;
-            var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
-            invoker.style.backgroundImage = style.backgroundImage;
+            memorize.controller.newGame(5);
+            changePaletteIcon(this);
         };
 
         var sixButton = document.getElementById("six-button");
         sixButton.onclick = function () {
-            memorize.model.createGame(6);
-            memorize.view.createView(6);
-            memorize.controller.update();
-            sizePalette.popDown();
-            var span = this.querySelector('span');
-            var style = span.currentStyle || window.getComputedStyle(span, '');
-            sizeButton.style.backgroundImage = style.backgroundImage;
-            var invoker = sizePalette.getPalette().querySelector('.palette-invoker');
-            invoker.style.backgroundImage = style.backgroundImage;
+            memorize.controller.newGame(6);
+            changePaletteIcon(this);
         };
 
         var restartButton = document.getElementById("restart-button");
         restartButton.onclick = function () {
-            memorize.model.createGame();
-            memorize.view.createView(memorize.model.size);
-            memorize.controller.update();
+            memorize.controller.newGame();
         };
-
     });
-
 });

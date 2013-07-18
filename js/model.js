@@ -35,7 +35,6 @@ define(function (require) {
 
     model.Model.prototype.loadGame = function (cardsSet) {
         this.cardsSet = cardsSet;
-        this.createGame();
     };
 
     // Initialize gameCards, the set of cards shuffled and grouped in
