@@ -1,6 +1,6 @@
 define(function (require) {
     var activity = require("sugar-web/activity/activity");
-    var palettemenu = require("sugar-web/graphics/palettemenu");
+    var menupalette = require("sugar-web/graphics/menupalette");
     var mustache = require("mustache");
 
     var model = require("activity/model");
@@ -51,10 +51,6 @@ define(function (require) {
             {label: "6 X 6", id: "six-button", icon: true}
         ];
 
-        var sizeButton = document.getElementById("size-button");
-        var sizePalette = new palettemenu.PaletteMenu(sizeButton, "Change size",
-                                                      menuData);
-
         var changePaletteIcon = function (button) {
             var span = button.querySelector('span');
             var style = span.currentStyle || window.getComputedStyle(span, '');
@@ -63,23 +59,23 @@ define(function (require) {
             invoker.style.backgroundImage = style.backgroundImage;
         };
 
-        var fourButton = document.getElementById("four-button");
-        fourButton.onclick = function () {
-            memorize.controller.newGame(4);
-            changePaletteIcon(this);
-        };
+        function onSizeSelected(event) {
+            if (event.detail.target.id == "four-button") {
+                memorize.controller.newGame(4);
+            }
+            if (event.detail.target.id == "five-button") {
+                memorize.controller.newGame(5);
+            }
+            if (event.detail.target.id == "six-button") {
+                memorize.controller.newGame(6);
+            }
+            changePaletteIcon(event.detail.target);
+        }
 
-        var fiveButton = document.getElementById("five-button");
-        fiveButton.onclick = function () {
-            memorize.controller.newGame(5);
-            changePaletteIcon(this);
-        };
-
-        var sixButton = document.getElementById("six-button");
-        sixButton.onclick = function () {
-            memorize.controller.newGame(6);
-            changePaletteIcon(this);
-        };
+        var sizeButton = document.getElementById("size-button");
+        var sizePalette = new menupalette.MenuPalette(sizeButton, "Change size",
+                                                      menuData);
+        sizePalette.addEventListener('selectItem', onSizeSelected);
 
         var restartButton = document.getElementById("restart-button");
         restartButton.onclick = function () {
